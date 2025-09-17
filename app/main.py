@@ -32,6 +32,7 @@ class CarWashStation:
         total_income = 0.0
         for car in cars:
             if car.clean_mark < self.clean_power:
+                # Cada custo já vem arredondado do método calculate_washing_price
                 wash_cost = self.calculate_washing_price(car)
                 total_income += wash_cost
                 self.wash_single_car(car)
@@ -47,6 +48,8 @@ class CarWashStation:
             * self.average_rating
             / self.distance_from_city_center
         )
+        # A CORREÇÃO CRÍTICA ESTÁ AQUI:
+        # Arredonda o preço individual antes de retornar.
         return round(price, 1)
 
     def wash_single_car(self, car: Car) -> None:
