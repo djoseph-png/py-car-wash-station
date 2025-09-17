@@ -1,8 +1,15 @@
 from decimal import Decimal, ROUND_HALF_UP
 
+
 class Car:
     """Representa um carro com suas propriedades."""
-    def __init__(self, comfort_class: int, clean_mark: int, brand: str) -> None:
+
+    def __init__(
+        self,
+        comfort_class: int,
+        clean_mark: int,
+        brand: str,
+    ) -> None:
         self.comfort_class = comfort_class
         self.clean_mark = clean_mark
         self.brand = brand
@@ -24,9 +31,9 @@ class CarWashStation:
         self.count_of_ratings = count_of_ratings
 
     @staticmethod
-    def _q10_half_up(x: Decimal) -> Decimal:
+    def _q10_half_up(value: Decimal) -> Decimal:
         """Arredonda para 1 casa com HALF_UP (0.05 → 0.1)."""
-        return x.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+        return value.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
 
     def _price_decimal(self, car: "Car") -> Decimal:
         """Preço individual como Decimal já arredondado a 0.1 (HALF_UP)."""
@@ -40,18 +47,21 @@ class CarWashStation:
     def serve_cars(self, cars: list["Car"]) -> float:
         """
         Lava carros com clean_mark < clean_power e retorna o rendimento total.
-        Soma preços individuais já arredondados com Decimal para evitar erro binário.
+        Soma preços individuais já arredondados com Decimal.
         """
         total = Decimal("0.0")
         for car in cars:
             if car.clean_mark < self.clean_power:
-                price = self._price_decimal(car)   # já 0.1 HALF_UP
+                price = self._price_decimal(car)
                 total += price
                 self.wash_single_car(car)
         return float(self._q10_half_up(total))
 
     def calculate_washing_price(self, car: "Car") -> float:
-        """Custo de lavagem para um carro (retorna float, mas arredondado correto)."""
+        """
+        Custo de lavagem para um carro
+        (retorna float, mas arredondado correto).
+        """
         return float(self._price_decimal(car))
 
     def wash_single_car(self, car: "Car") -> None:
@@ -63,8 +73,12 @@ class CarWashStation:
         """Recalcula a média com uma nova avaliação."""
         current_total_rating = self.average_rating * self.count_of_ratings
         self.count_of_ratings += 1
-        new_average_rating = (current_total_rating + new_rate) / self.count_of_ratings
-        # manter HALF_UP aqui também para consistência
+        new_average_rating = (
+            current_total_rating + new_rate
+        ) / self.count_of_ratings
         self.average_rating = float(
-            Decimal(str(new_average_rating)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+            Decimal(str(new_average_rating)).quantize(
+                Decimal("0.1"),
+                rounding=ROUND_HALF_UP,
+            )
         )
